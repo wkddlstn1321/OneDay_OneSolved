@@ -1,5 +1,6 @@
 ### 달리기경주
 [문제링크](https://school.programmers.co.kr/learn/courses/30/lessons/178871)
+
 java와 친해질 겸 오랜만에 알고리즘 감도 찾을겸 풀어본 프로그래머스 1단계 문제
 
 # 해결과정
