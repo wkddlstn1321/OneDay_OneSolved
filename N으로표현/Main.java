@@ -5,10 +5,6 @@ public class Main{
 		System.out.println(solution(5, 12));
 	}
 	public static int solution(int N, int number) {
-		int []dp = new int[32001];
-		for (int i = 2 ; i < 9 ; i++) {
-			dp[(int)Math.pow(N, i)] = i;
-		}
 		return dp[number];
 	}
 }
