@@ -5,6 +5,6 @@ public class Main{
 		System.out.println(solution(5, 12));
 	}
 	public static int solution(int N, int number) {
-		return dp[number];
+		return 0;
 	}
 }
