@@ -31,7 +31,6 @@ public class Main {
 			}
 		}
 		List<String> KeySet = new ArrayList<>(map.keySet());
-		keySet.sort((o1, o2) -> map.get(o1).compareTo(map.get(o1)));
 		return answer;
 	}
 }
