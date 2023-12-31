@@ -1,4 +1,4 @@
-### 전력망을 둘로 나누기
+### 이모티콘 할인 행사
 
 [문제링크](https://school.programmers.co.kr/learn/courses/30/lessons/150368)
 
