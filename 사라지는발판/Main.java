@@ -1,22 +1,24 @@
 package 사라지는발판;
 
-// 완전탐색
-// 둘 다 최선의 플레이를 한다면 가장 작은 이동횟수가 나온다.
-// A가 이기면서 이동횟수가 가장 적은 경우
-// B가 이기면서 이동횟수가 가장 많은 경우
-
-// A가 지는 조건
-// B가 지는 조건
-// 도망치는가 끝내는가
-
 //종료 조건
 // 내 현재 위치가 0이다
 // 4방향에 1이 없다
 
 class Solution {
+	int move = 0;
+	int[][] gBoard;
 	public int solution(int[][] board, int[] aloc, int[] bloc) {
 		int answer = -1;
+		gBoard = board;
+		dfs(aloc.clone(), bloc.clone(), 0);
 		return answer;
+	}
+	public void dfs(int[] aloc, int[] bloc, int move) {
+		
+	}
+
+	public boolean miniMax() {
+		return true;
 	}
 }
 
@@ -35,3 +37,13 @@ public class Main {
 //A1B
 //101
 //101
+
+// 누가 이기는지를 알아야 한다
+// 누가 이기는지는 알 수가 없다?
+
+//이동 짝수이면 A가 짐
+//이동 홀수이면 A가 이김
+
+// 무조건 지는 경우에는 최대값을 리턴
+
+// 모른다 최소값을 리턴
