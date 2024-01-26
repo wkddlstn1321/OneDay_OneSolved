@@ -1,6 +1,5 @@
 package 주사위고르기;
 
-
 // 10개의 주사위중 5개를 고르는 경우의 수는 252
 // 5개의 주사위로 나올 경우의수 7776
 
@@ -20,8 +19,8 @@ class Solution {
 	public int[][] gDice;
 	public int diceLength;
 	public ArrayList<Integer> answerList = null;
-	public ArrayList<Integer> answerScoreBoard = null;
 	public ArrayList<Integer> currList;
+	public int maxWinCnt = 0;
 	public int scoreBoardLength = 0;
 
 	public int[] solution(int[][] dice) {
@@ -30,7 +29,7 @@ class Solution {
 		gDice = dice;
 		currList = new ArrayList<>();
 		dfs(0);
-		for (int i = 0 ; i < answerList.size() ; i++) {
+		for (int i = 0; i < answerList.size(); i++) {
 			answer[i] = answerList.get(i) + 1;
 		}
 		return answer;
@@ -39,18 +38,24 @@ class Solution {
 	// 주사위 선택하는 모든 경우의 수 구하기
 	public void dfs(int idx) {
 		if (currList.size() == diceLength / 2) {
-			for (int i : currList) {
-				System.out.print(i + " ");
-			}
-			System.out.println();
 			ArrayList<Integer> currScoreBoard = new ArrayList<>();
+			HashSet<Integer> includedElements = new HashSet<>(currList);
+			ArrayList<Integer> remainingScoreboard = new ArrayList<>();
+			ArrayList<Integer> remainingList = new ArrayList<>();
+			for (int i = 0 ; i < diceLength ; i++) {
+				if (!includedElements.contains(i)) {
+					remainingList.add(i);
+				}
+			}
 			// 선택한 주사위로 조합할 수 있는 모든 정수 저장
-			scoreBoardUpdate(0, 0, currScoreBoard);
+			scoreBoardUpdate(0, 0, currScoreBoard, currList);
+			// 나머지 주사위로 조합할 수 있는 모든 정수 저장
+			scoreBoardUpdate(0, 0, remainingScoreboard, remainingList);
 			if (scoreBoardLength == 0) {
 				scoreBoardLength = currScoreBoard.size();
 			}
-			// answerList와 비교 후 갱신
-			answerUpdate(currScoreBoard);
+			// 나머지 경우와 비교 후 갱신
+			answerUpdate(currScoreBoard, remainingScoreboard);
 			return;
 		}
 		for (int i = idx; i < diceLength; i++) {
@@ -61,39 +66,30 @@ class Solution {
 	}
 
 	// 스코어보드 갱신
-	public void scoreBoardUpdate(int sum, int idx, ArrayList<Integer> currScoreBoard) {
-		// 3번째 인덱스일때
+	public void scoreBoardUpdate(int sum, int idx, ArrayList<Integer> currScoreBoard, ArrayList<Integer> diceList) {
 		if (idx == diceLength / 2) {
 			addScoreBoard(currScoreBoard, sum);
 			return;
 		}
 		for (int i = 0; i < 6; i++) {
-			sum += gDice[currList.get(idx)][i];
-			scoreBoardUpdate(sum, idx + 1, currScoreBoard);
-			sum -= gDice[currList.get(idx)][i];
+			sum += gDice[diceList.get(idx)][i];
+			scoreBoardUpdate(sum, idx + 1, currScoreBoard, diceList);
+			sum -= gDice[diceList.get(idx)][i];
 		}
 	}
 
 	// 승이 패보다 더 많으면 리스트 갱신
-	public void answerUpdate(ArrayList<Integer> currScoreBoard) {
-		if (answerScoreBoard == null) {
-			answerScoreBoard = new ArrayList<>(currScoreBoard);
+	public void answerUpdate(ArrayList<Integer> currScoreBoard, ArrayList<Integer> remainingScoreboard) {
+		if (answerList == null) {
 			answerList = new ArrayList<>(currList);
 		}
 		int winCnt = 0;
-		int loseCnt = 0;
 		for (int i : currScoreBoard) {
-			int idx = binarySearch(answerScoreBoard, i);
+			int idx = binarySearchMinIndex(remainingScoreboard, i);
 			winCnt += idx;
-			for (int j = idx + 1; j < scoreBoardLength; j++) {
-				if (i < answerScoreBoard.get(j)) {
-					loseCnt += scoreBoardLength - j;
-					break;
-				}
-			}
 		}
-		if (winCnt > loseCnt) {
-			Collections.copy(answerScoreBoard, currScoreBoard);
+		if (winCnt > maxWinCnt) {
+			maxWinCnt = winCnt;
 			Collections.copy(answerList, currList);
 		}
 	}
@@ -104,11 +100,11 @@ class Solution {
 			currScoreBoard.add(sum);
 			return;
 		}
-		int idx = binarySearch(currScoreBoard, sum);
+		int idx = binarySearchMinIndex(currScoreBoard, sum);
 		currScoreBoard.add(idx, sum);
 	}
 
-	public int binarySearch(ArrayList<Integer> list, int target) {
+	public int binarySearchMinIndex(ArrayList<Integer> list, int target) {
 		int left = 0;
 		int right = list.size() - 1;
 		while (left <= right) {
@@ -126,7 +122,7 @@ class Solution {
 public class Main {
 	public static void main(String[] args) {
 		Solution sol = new Solution();
-		int[][] dice = { {40, 41, 42, 43, 44, 45}, {43, 43, 42, 42, 41, 41}, {1, 1, 80, 80, 80, 80}, {70, 70, 1, 1, 70, 70}};
+		int[][] dice = { {1, 2, 3, 4, 5, 6}, {3, 3, 3, 3, 4, 4}, {1, 3, 3, 4, 4, 4}, {1, 1, 4, 4, 5, 5}};
 		System.out.println(Arrays.toString(sol.solution(dice)));
 	}
 }
