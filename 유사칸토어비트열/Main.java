@@ -7,14 +7,13 @@ class Solution {
 	// 1
 	// 1 1 0 1 1
 	// 11011 11011 00000 11011 11011
-	// 11011 11011 00000 11011 11011 11011 11011 00000 11011 11011
-	// 0000000000000000000000000 11011 11011 00000 11011 11011 11011 11011 00000
+	// 1101111011000001101111011 1101111011000001101111011 0000000000000000000000000 1101111011000001101111011 1101111011000001101111011
 	// 11011 11011
 	public int solution(int n, long l, long r) {
 		int answer = 0;
 		long size = (long) Math.pow(5, n);
 		long partition = size / 5;
-		for (long i = l ; i <= r; l++) {
+		for (long i = l; i <= r; i++) {
 			answer += dfs(partition, i);
 		}
 		return answer;
@@ -23,7 +22,10 @@ class Solution {
 	public int dfs(long partition, long num) {
 		if (partition * 2 < num && num <= partition * 3)
 			return 0;
-		return dfs(partition / 5, num / 5 + num % 5);
+		if (partition == 1) {
+			return 1;
+		}
+		return dfs(partition / 5, num % partition);
 	}
 }
 
