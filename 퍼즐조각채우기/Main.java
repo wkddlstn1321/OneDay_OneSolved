@@ -11,9 +11,16 @@ class Solution {
 	int[][] tableVisit;
 	int[] dirX = { -1, 1, 0, 0 };
 	int[] dirY = { 0, 0, -1, 1 };
+	int[] rotatePos = {0, 1, 2};
 	int[][] gGameBoard;
 	int[][] gTable;
+	int[][] table90;
+	int[][] table180;
+	int[][] table270;
+	int[][][] tableRotate;
 	int boardLength;
+	HashMap<Integer, List<Point>> gameBoardMap = new HashMap<>();
+	HashMap<Integer, List<Point>> tableMap = new HashMap<>();
 
 	public int solution(int[][] game_board, int[][] table) {
 		int answer = -1;
@@ -22,19 +29,80 @@ class Solution {
 		gTable = table;
 		boardVisit = new int[boardLength][boardLength];
 		tableVisit = new int[boardLength][boardLength];
+		table90 = rotate90(table);
+		table180 = rotate90(table90);
+		table270 = rotate90(table180);
+		tableRotate = new int[][][] { table, table90, table180, table270 };
 		ArrayList<Integer> game_boardList = new ArrayList<>();
 		ArrayList<Integer> tableList = new ArrayList<>();
 		for (int i = 0; i < boardLength; i++) {
 			for (int j = 0; j < boardLength; j++) {
 				if (game_board[i][j] == 0 && boardVisit[i][j] == 0) {
-					game_boardList.add(getPuzzlePieceCnt(0, i, j));
+					int cnt = getPuzzlePieceCnt(0, i, j);
+					if (gameBoardMap.containsKey(cnt)) {
+						gameBoardMap.get(cnt).add(new Point(i, j));
+					} else {
+						List<Point> list = new ArrayList<>();
+						list.add(new Point(i, j));
+						gameBoardMap.put(cnt, list);
+					}
 				}
 				if (table[i][j] == 1 && tableVisit[i][j] == 0) {
-					tableList.add(getPuzzlePieceCnt(1, i, j));
+					int cnt = getPuzzlePieceCnt(1, i, j);
+					if (tableMap.containsKey(cnt)) {
+						tableMap.get(cnt).add(new Point(i, j));
+					} else {
+						List<Point> list = new ArrayList<>();
+						list.add(new Point(i, j));
+						tableMap.put(cnt, list);
+					}
 				}
 			}
 		}
+		// tableMap 순회
+		for (Map.Entry<Integer, List<Point>> i : tableMap.entrySet()) {
+			int key = i.getKey();
+			List<Point> points = i.getValue();
+			for (Point p : points) {
+				answer += puzzleInsert(key, p);
+			}
+		}
 		return answer;
+	}
+
+	private int puzzleInsert(int cnt, Point p) {
+		if (!gameBoardMap.containsKey(cnt)) {
+			return 0;
+		}
+		for (Point xy : gameBoardMap.get(cnt)) {
+			if (isInsertAvail(xy, p)) {
+				gameBoardMap.get(cnt).remove(xy);
+				if (gameBoardMap.get(cnt).size() == 0) {
+					gameBoardMap.remove(cnt);
+				}
+				return cnt;
+			}
+		}
+		return 0;
+	}
+
+	private boolean isInsertAvail(Point tableP, Point gameBoardP) {
+		for (int i = 0 ; i < 4 ; i++) {
+			int[][]	table = tableRotate[i];
+			for (int j = gameBoardP.x ; j < boardLength ; j++) {
+				for (int k = gameBoardP.y ; k < boardLength ; k++) {
+					if (table[j - gameBoardP.x][k - gameBoardP.y] == 1) {
+						if (gGameBoard[j][k] == 1) {
+							return false;
+						}
+					} else {
+						break ;
+					}
+				}
+				
+			}
+		}
+		return false;
 	}
 
 	private int getPuzzlePieceCnt(int state, int i, int j) {
@@ -59,6 +127,26 @@ class Solution {
 			}
 		}
 		return cnt;
+	}
+
+	private int[][] rotate90(int[][] table) {
+		int[][] temp = new int[boardLength][boardLength];
+		for (int i = 0 ; i < boardLength ; i++) {
+			for (int j = 0 ; j < boardLength ; j++) {
+				temp[i][j] = table[boardLength - j - 1][i];
+			}
+		}
+		return temp;
+	}
+
+	private Point rotatePos(Point p, int i) {
+		if (i == 0) {
+			return new Point(p.y, boardLength - p.x - 1);
+		} else if (i == 1) {
+			return new Point(boardLength - p.x - 1, boardLength - p.y - 1);
+		} else {
+			return new Point(boardLength - p.y - 1, p.x);
+		}
 	}
 }
 
