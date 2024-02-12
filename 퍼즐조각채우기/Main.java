@@ -86,6 +86,8 @@ class Solution {
 		return 0;
 	}
 
+	// 퍼즐을 넣을 수 있는지 확인
+	// table 시작 좌표와 gameBoard 시작 좌표를 일치시키고 table을 돌리면서 확인
 	private boolean isInsertAvail(Point tableP, Point gameBoardP) {
 		for (int i = 0 ; i < 4 ; i++) {
 			int[][]	table = tableRotate[i];
@@ -137,16 +139,6 @@ class Solution {
 			}
 		}
 		return temp;
-	}
-
-	private Point rotatePos(Point p, int i) {
-		if (i == 0) {
-			return new Point(p.y, boardLength - p.x - 1);
-		} else if (i == 1) {
-			return new Point(boardLength - p.x - 1, boardLength - p.y - 1);
-		} else {
-			return new Point(boardLength - p.y - 1, p.x);
-		}
 	}
 }
 
